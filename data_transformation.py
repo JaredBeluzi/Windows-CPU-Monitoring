@@ -17,9 +17,8 @@ df = df[df['CPU_usage_percent'] != ' ']
 df['CPU_usage_percent'] = df['CPU_usage_percent'].astype(int)
 
 # 3 grouping data
-# group by logging date and time
-df_grouped = df.groupby(['logging_date',
-                         'logging_time']).mean()
+# group by logging date and time and round the mean CPU usage to 2 decimals
+df_grouped = df.groupby(['logging_date', 'logging_time']).mean().round(2)
 
 # 4. Export data
 # check if file exists
