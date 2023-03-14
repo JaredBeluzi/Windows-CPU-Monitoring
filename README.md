@@ -1,48 +1,99 @@
---------------------------------
-------------- Goal -------------
---------------------------------
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#what-does-it-do">What does it do?</a></li>
+    <li><a href="#how-to-use">How to use</a></li>
+    <li><a href="#how-does-it-work">How does it work?</a></li>
+      <ul>
+        <li><a href="#STARTbat">START.bat</a></li>
+        <li><a href="#loggingbat">logging.bat</a></li>
+        <li><a href="#data_transformationpy">data_transformation.py</a></li>
+      </ul>
+    <li><a href="#how-can-i-test-the-program">How can I test the program?</a></li>
+      <ul>
+        <li><a href="#testing-the-batch-files">Testing the batch files</a></li>
+        <li><a href="#testing-the-python-file">Testing the python file</a></li>
+      </ul>
+  </ol>
+</details>  
 
-Fill logging.csv with data about CPU usage for a shared Server.
-The data includes
-- logging date
+# What does it do?
+
+**Example result:**
+
+![alt text](https://github.com/JaredBeluzi/Windows-RAM-Monitoring/blob/main/logging_hist.png?raw=true)
+
+The program creates a logging_hist.csv as above with data about the RAM usage of a Windows PC.
+The data shown in the picture above shows from left to right:
+- user (with domain)
+- process name
+- number of logging attempt of the day (useful for grouping data on each logging process)
+- logging date (German Format)
 - logging time
-- CPU usage in percent
+- RAM usage in KB
 
+Since each user will be monitored seperately, this program can be used on a machine to track RAM usage per user on a multi-user PC.
 This data can then be used to create any dashboard you like.
 
---------------------------------
---------- How to use? ----------
---------------------------------
+# How to use
 
-- copy whole folder to machine, where you want to monitor the RAM usage
-- install python on that machine
-- install pandas package in Python (e.g. in cmd: "py -m pip install pandas")
-- add a task in task scheduler on Windows that starts the START.bat in the downloaded folder at the morning, e.g. at 06:00
-- let the Server do its thing and wait at least 2 days. Then there should be a logging_hist.csv in this folder, that you can use however you want
+1. Copy the whole folder to the machine, where you want to monitor the RAM usage.
+2. Install python on that machine (I used python 3.11.1)
+3. Install the pandas package in Python (in cmd you can type:
+```batch
+python -m pip install pandas
+```
+4. Add a task in the task scheduler on Windows that starts the START.bat in the downloaded folder each day in the morning, e.g. at 06:00 
+(please check the box in the task scheduler that starts the script even if you are not logged in on that machine!)
+5. Let the Server do its thing and wait at least 2 days. Then there should be a logging_hist.csv like the one in the picture above in this folder
 
 
---------------------------------
------- How does it work? -------
---------------------------------
+# How does it work?
 
-1. START.bat
+### START.bat
 
-Started via Task Scheduler (Aufgabenplanung) every day in the morning at 06:00.
-Starts logging.bat.
+- should be started via Task Scheduler every day in the morning, e.g. at 06:00.
+- starts logging.bat
 
-2. logging.bat
+### logging.bat
 
-Retrieves CPU usage every 5 seconds and writes it into logging.csv.
-Runs until 20:00. After that process stops and data_transformation.py starts.
+- retrieves list of all processes with users and RAM usage once every minute and writes it into a logging.csv.
+- runs until 20:00
+- process stops and data_transformation.py starts
 
-3. data_transformation.py
+### data_transformation.py
 
-Loads logging.csv in python, corrects some mistakes in the data and aggregates them to save disk space.
-Aggregated data is added to logging_hist.csv.
+- loads logging.csv into a pandas dataframe
+- corrects some mistakes in the data
+- aggregates data to save some disk space
+- aggregated data is added to a logging_hist.csv
 
---------------------------------
---- How does the data look? ----
---------------------------------
+# How can I test the program?
 
-If you want to take a look at what the data looks like, take a look at the jupyter notebook files, that I included.
-To use them I recommend installing Jupyter Notebooks beforehand. You can also look at it by installing some jupyter extension in you IDE of choice.
+### Testing the batch files
+
+1. Copy the whole folder to the machine, where you want to monitor the RAM usage.
+2. Double click the START.bat
+This should open a cmd and create a logging.csv in the folder.
+You can click inside the cmd and stop the program:
+- click `CTRL + c`
+- This shows a message like "Stop the process (Y/N)"
+- Here you can type `y` and click enter
+- Then close the cmd window
+If you open the logging.csv, you should see something similar this:
+
+![alt text](https://github.com/JaredBeluzi/Windows-RAM-Monitoring/blob/main/logging.png?raw=true)
+
+### Testing the python file
+
+1. First test the batch files (you need to create a logging.csv to test the python script)
+2. Run data_transformation.py
+To do this you can run the file in your IDE of choice or you can open a cmd and type
+```batch
+python data_transformation.py
+```
+Wait until the script finishes. If everything went well, there should be a logging_hist.csv in the folder that looks like this:
+![alt text](https://github.com/JaredBeluzi/Windows-RAM-Monitoring/blob/main/logging_hist.png?raw=true)
+
+If it did not work or the logging_hist.csv looks wrong, you can go through the python code step by step by going through the Jupyter file "data_transformation_test.ipynb" I included. I recommend you install Jupyter Notebooks before doing this and open the notebook (data_transformation_test.ipynb) in Jupyter. Here you can execute and debug each cell of code by clicking `Shift + Enter`.
