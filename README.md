@@ -22,23 +22,19 @@
 
 **Example result:**
 
-![alt text](https://github.com/JaredBeluzi/Windows-RAM-Monitoring/blob/main/logging_hist.png?raw=true)
+![alt text](https://github.com/JaredBeluzi/Windows-CPU-Monitoring/blob/main/logging_hist.png?raw=true)
 
-The program creates a logging_hist.csv as above with data about the RAM usage of a Windows PC.
+The program creates a logging_hist.csv as above with data about the CPU usage of a Windows PC.
 The data shown in the picture above shows from left to right:
-- user (with domain)
-- process name
-- number of logging attempt of the day (useful for grouping data on each logging process)
 - logging date (German Format)
 - logging time
-- RAM usage in KB
+- CPU usage in percent
 
-Since each user will be monitored seperately, this program can be used on a machine to track RAM usage per user on a multi-user PC.
 This data can then be used to create any dashboard you like.
 
 # How to use
 
-1. Copy the whole folder to the machine, where you want to monitor the RAM usage.
+1. Copy the whole folder to the machine, where you want to monitor the CPU usage.
 2. Install python on that machine (I used python 3.11.1)
 3. Install the pandas package in Python (in cmd you can type:
 ```batch
@@ -46,7 +42,7 @@ python -m pip install pandas
 ```
 4. Add a task in the task scheduler on Windows that starts the START.bat in the downloaded folder each day in the morning, e.g. at 06:00 
 (please check the box in the task scheduler that starts the script even if you are not logged in on that machine!)
-5. Let the Server do its thing and wait at least 2 days. Then there should be a logging_hist.csv like the one in the picture above in this folder
+5. Let the Server do its thing and wait at least 2 days. Then there should be a logging_hist.csv in this folder like the one in the picture above.
 
 
 # How does it work?
@@ -58,7 +54,7 @@ python -m pip install pandas
 
 ### logging.bat
 
-- retrieves list of all processes with users and RAM usage once every minute and writes it into a logging.csv.
+- retrieves CPU usage in percent every 5 seconds
 - runs until 20:00
 - process stops and data_transformation.py starts
 
@@ -66,7 +62,7 @@ python -m pip install pandas
 
 - loads logging.csv into a pandas dataframe
 - corrects some mistakes in the data
-- aggregates data to save some disk space
+- aggregates CPU usage of every minute as mean (This saves space)
 - aggregated data is added to a logging_hist.csv
 
 # How can I test the program?
@@ -83,7 +79,7 @@ You can click inside the cmd and stop the program:
 - Then close the cmd window
 If you open the logging.csv, you should see something similar this:
 
-![alt text](https://github.com/JaredBeluzi/Windows-RAM-Monitoring/blob/main/logging.png?raw=true)
+![alt text](https://github.com/JaredBeluzi/Windows-CPU-Monitoring/blob/main/logging.png?raw=true)
 
 ### Testing the python file
 
@@ -94,6 +90,6 @@ To do this you can run the file in your IDE of choice or you can open a cmd and 
 python data_transformation.py
 ```
 Wait until the script finishes. If everything went well, there should be a logging_hist.csv in the folder that looks like this:
-![alt text](https://github.com/JaredBeluzi/Windows-RAM-Monitoring/blob/main/logging_hist.png?raw=true)
+![alt text](https://github.com/JaredBeluzi/Windows-CPU-Monitoring/blob/main/logging_hist.png?raw=true)
 
 If it did not work or the logging_hist.csv looks wrong, you can go through the python code step by step by going through the Jupyter file "data_transformation_test.ipynb" I included. I recommend you install Jupyter Notebooks before doing this and open the notebook (data_transformation_test.ipynb) in Jupyter. Here you can execute and debug each cell of code by clicking `Shift + Enter`.
