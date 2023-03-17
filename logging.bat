@@ -4,9 +4,6 @@ setlocal EnableDelayedExpansion
 rem Set the log file path
 set "logFile=logging.csv"
 
-rem Set the stop time to 20:00
-set "stopTime=20:00"
-
 rem Initialize the loop counter
 set "loopCounter=1"
 
@@ -27,8 +24,8 @@ for /f "tokens=1-2 delims=: " %%a in ('time /t') do (
   set "minute=%%b"
 )
 
-rem Check if the current time is past the stop time
-if %hour% GEQ 20 (
+rem Check if the current time is past the stop time 17:00
+if %hour% GEQ 17 (
   echo Stopping logging process.
   goto :done
 )
