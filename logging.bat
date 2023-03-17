@@ -45,7 +45,7 @@ goto :loop
 :done
 
 rem run python file
-python3.6 data_transformation.py
+py data_transformation.py
 
 rem Done
 echo Logging process stopped.
